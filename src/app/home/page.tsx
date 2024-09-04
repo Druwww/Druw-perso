@@ -1,11 +1,11 @@
-import NavBar from "./root/navbar";
+import NavBar from "../root/navbar";
 
 export default function Home() {
   return (
     <main>
       <NavBar/>
       <div>
-        Druw Perso website
+        Druw Perso website - Home Page !
       </div>
     </main>
   );
