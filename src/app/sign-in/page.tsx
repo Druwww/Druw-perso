@@ -1,16 +1,32 @@
 'use client'
 import { useState } from 'react';
 import { Container, TextField, Button, Typography, Box } from '@mui/material';
+import {useSignInWithEmailAndPassword} from 'react-firebase-hooks/auth'
+import {auth} from '@/lib/firebase/config'
+import { useRouter } from 'next/navigation';
 
 export default function SignIn() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (e : any) => {
-    e.preventDefault();
-    // Handle sign-up logic here
-    console.log('Email:', email);
-    console.log('Password:', password);
+  const [signInWithEmailAndPassword] = useSignInWithEmailAndPassword(auth);
+
+  const router = useRouter()
+
+  const handleSubmit = async () => {
+    try {
+      const res = await signInWithEmailAndPassword(email, password)
+      //need to handle error
+      console.log({res})
+      setPassword('')
+      if(res?.user){
+        setEmail('')
+        router.push('/')
+      }
+    }
+    catch (e){
+      console.error(e)
+    }
   };
 
   return (
@@ -52,7 +68,7 @@ export default function SignIn() {
             onChange={(e) => setPassword(e.target.value)}
           />
           <Button
-            type="submit"
+            onClick={handleSubmit}
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
