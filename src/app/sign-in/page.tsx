@@ -17,7 +17,6 @@ export default function SignIn() {
     try {
       const res = await signInWithEmailAndPassword(email, password)
       //need to handle error
-      console.log({res})
       setPassword('')
       if(res?.user){
         setEmail('')
@@ -69,6 +68,14 @@ export default function SignIn() {
           />
           <Button
             onClick={handleSubmit}
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+          >
+            Sign In
+          </Button>
+          <Button
+            onClick={() => router.push('/sign-up')}
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}

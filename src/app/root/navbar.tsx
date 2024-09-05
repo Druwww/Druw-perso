@@ -14,13 +14,18 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import ComputerIcon from '@mui/icons-material/Computer';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { auth } from '@/lib/firebase/config';
+import { AccountCircle } from '@mui/icons-material';
+import { signOut } from 'firebase/auth';
 
-const pages = ['Home', 'WIP', 'About'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const pages = ['WIP', 'About'];
 
 function NavBar() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+
+  const [user] = useAuthState(auth);
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -37,6 +42,10 @@ function NavBar() {
     setAnchorElUser(null);
   };
 
+  const logout = () => {
+    signOut(auth);
+  }
+
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
@@ -46,7 +55,7 @@ function NavBar() {
             variant="h6"
             noWrap
             component="a"
-            href={'/' + pages[0].toLowerCase()}
+            href='/'
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
@@ -128,7 +137,7 @@ function NavBar() {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+              <AccountCircle />
               </IconButton>
             </Tooltip>
             <Menu
@@ -147,11 +156,12 @@ function NavBar() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
-                </MenuItem>
-              ))}
+              <MenuItem key="userEmail" onClick={handleCloseUserMenu}>
+                <Typography sx={{ textAlign: 'center' }}>{user?.email}</Typography>
+              </MenuItem>
+              <MenuItem key="logout" onClick={handleCloseUserMenu}>
+                <Typography sx={{ textAlign: 'center' }} onClick={logout}>Logout</Typography>
+              </MenuItem>
             </Menu>
           </Box>
         </Toolbar>
