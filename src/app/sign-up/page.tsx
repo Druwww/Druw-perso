@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Container, TextField, Button, Typography, Box } from '@mui/material';
 import {useCreateUserWithEmailAndPassword} from 'react-firebase-hooks/auth'
 import {auth} from '@/lib/firebase/config'
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 
 export default function SignUp() {
   const [email, setEmail] = useState('');

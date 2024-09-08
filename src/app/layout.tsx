@@ -5,8 +5,10 @@ import "./globals.css";
 import StoreProvider from "./StoreProvider";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "@/lib/firebase/config";
-import { useRouter } from "next/navigation";
-import Loading from "./loading";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
+import LoadingAll from "../component/loaders/loadingAll";
+import NavBar from "./root/navbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,17 +23,32 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
 
-  const [user] = useAuthState(auth);
+  const [user, loading, error] = useAuthState(auth);
   const router = useRouter()
+  const pathname = usePathname()
 
-  if(!user)
-    router.push('/sign-in')
-      
+  useEffect(() => {
+    if(!user)
+      router.push('/sign-in');
+  },[user])
+
+  if(loading){
+    return (
+      <html lang="en">
+        <body className={inter.className}>
+          <LoadingAll/>
+        </body>
+      </html>
+    )
+  }
     
   return (
     <StoreProvider>
       <html lang="en">
-        <body className={inter.className}>{children}</body>
+        <body className={inter.className}>  
+          <NavBar/>
+          {children}
+        </body>
       </html>
     </StoreProvider>
   );

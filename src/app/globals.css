@@ -31,3 +31,7 @@
     text-wrap: balance;
   }
 }
+
+.main{
+  height: 100%;
+}

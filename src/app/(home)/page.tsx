@@ -3,6 +3,7 @@ import { Button } from "@mui/material";
 import NavBar from "../root/navbar";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { login, logout } from "@/lib/auth/authSlice";
+import LoadingAll from "@/component/loaders/loadingAll";
 
 export default function Home() {
 
@@ -10,10 +11,7 @@ export default function Home() {
     const dispatch = useAppDispatch()
     return (
         <main>
-            <div>
-                Druw Perso website - Home Page !
-            </div>
-            
+            <LoadingAll/>            
         </main>
     );
 }
