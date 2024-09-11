@@ -18,6 +18,11 @@ export async function createSession(uid: string) {
 
 export async function removeSession() {
   cookies().delete(SESSION_COOKIE_NAME);
+}
 
-  redirect(LOGIN_ROUTE);
+export async function checkSession(){
+    const session = cookies().get(SESSION_COOKIE_NAME)?.value || null;
+    if (!session) {
+        redirect(LOGIN_ROUTE);
+    }
 }

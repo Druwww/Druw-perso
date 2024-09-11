@@ -16,19 +16,20 @@ import ComputerIcon from '@mui/icons-material/Computer';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '@/lib/firebase/config';
 import { AccountCircle } from '@mui/icons-material';
-import { signInWithEmail, signOut } from '@/lib/firebase/auth';
+import { signOut } from '@/lib/firebase/auth';
 import { useRouter } from 'next/navigation';
-import { removeSession } from '@/actions/auth-actions';
+import { checkSession, removeSession } from '@/actions/auth-actions';
+import { cookies } from 'next/headers';
+import { SESSION_COOKIE_NAME } from '@/constants';
+import { useEffect } from 'react';
 
 const pages = ['WIP', 'About'];
 
-function NavBar({ session }: { session: string | null }) {
+function NavBar() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
   const [user] = useAuthState(auth);
-
-  const router = useRouter()
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -50,6 +51,10 @@ function NavBar({ session }: { session: string | null }) {
     await removeSession();
   };
 
+  useEffect(() => {
+    checkSession()
+  }, [user])
+  
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
