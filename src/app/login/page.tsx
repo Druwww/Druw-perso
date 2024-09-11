@@ -4,28 +4,24 @@ import { Container, TextField, Button, Typography, Box } from '@mui/material';
 import {useSignInWithEmailAndPassword} from 'react-firebase-hooks/auth'
 import {auth} from '@/lib/firebase/config'
 import { useRouter } from "next/navigation";
+import { signInWithEmail } from '@/lib/firebase/auth';
+import { createSession } from '@/actions/auth-actions';
 
-export default function SignIn() {
+export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const [signInWithEmailAndPassword] = useSignInWithEmailAndPassword(auth);
+  
 
   const router = useRouter()
 
   const handleSubmit = async () => {
-    try {
-      const res = await signInWithEmailAndPassword(email, password)
-      //need to handle error
-      setPassword('')
-      if(res?.user){
-        setEmail('')
-        router.push('/')
-      }
+    const uid = await signInWithEmail(email, password);
+    if(!uid){
+      setPassword('');
+      return;
     }
-    catch (e){
-      console.error(e)
-    }
+    createSession(uid);
   };
 
   return (
@@ -72,7 +68,7 @@ export default function SignIn() {
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
-            Sign In
+            Login
           </Button>
           <Button
             onClick={() => router.push('/sign-up')}

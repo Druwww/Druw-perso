@@ -9,7 +9,6 @@ import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
@@ -17,15 +16,19 @@ import ComputerIcon from '@mui/icons-material/Computer';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '@/lib/firebase/config';
 import { AccountCircle } from '@mui/icons-material';
-import { signOut } from 'firebase/auth';
+import { signInWithEmail, signOut } from '@/lib/firebase/auth';
+import { useRouter } from 'next/navigation';
+import { removeSession } from '@/actions/auth-actions';
 
 const pages = ['WIP', 'About'];
 
-function NavBar() {
+function NavBar({ session }: { session: string | null }) {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
   const [user] = useAuthState(auth);
+
+  const router = useRouter()
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -42,9 +45,10 @@ function NavBar() {
     setAnchorElUser(null);
   };
 
-  const logout = () => {
-    signOut(auth);
-  }
+  const handleSignOut = async () => {
+    await signOut();
+    await removeSession();
+  };
 
   return (
     <AppBar position="static">
@@ -160,7 +164,7 @@ function NavBar() {
                 <Typography sx={{ textAlign: 'center' }}>{user?.email}</Typography>
               </MenuItem>
               <MenuItem key="logout" onClick={handleCloseUserMenu}>
-                <Typography sx={{ textAlign: 'center' }} onClick={logout}>Logout</Typography>
+                <Typography sx={{ textAlign: 'center' }} onClick={handleSignOut}>Logout</Typography>
               </MenuItem>
             </Menu>
           </Box>

@@ -1,12 +1,9 @@
-import NavBar from "../root/navbar";
+import NavBar from "../../component/navbar/navbar";
 
 export default function Home() {
   return (
-    <main>
-      <NavBar/>
-      <div>
-        Druw Perso website - WIP Page !
-      </div>
-    </main>
+    <div>
+      Druw Perso website - WIP Page !
+    </div>
   );
 }
