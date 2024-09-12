@@ -7,19 +7,24 @@ import { redirect, useRouter } from "next/navigation";
 import { signInWithEmail } from '@/lib/firebase/auth';
 import { createSession } from '@/actions/auth-actions';
 import { ROOT_ROUTE } from '@/constants';
+import { LoadingButton } from '@mui/lab';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const [loading, setLoading] = useState(false);
+
   const router = useRouter()
 
   const handleSubmit = async () => {
-    const uid = await signInWithEmail(email, password);
-    if(uid){
-      router.push(ROOT_ROUTE);
-    }
-    
+    setLoading(true)
+    signInWithEmail(email, password).then((uid : string | undefined) => {
+      if(uid){
+        router.push(ROOT_ROUTE);
+      }
+      setLoading(false);
+    })
     setPassword('');
   };
 
@@ -61,14 +66,15 @@ export default function Login() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <Button
+          <LoadingButton
             onClick={handleSubmit}
             fullWidth
+            loading={loading}
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
             Login
-          </Button>
+          </LoadingButton>
           <Button
             onClick={() => router.push('/sign-up')}
             fullWidth

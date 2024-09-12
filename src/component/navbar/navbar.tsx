@@ -47,8 +47,7 @@ function NavBar() {
   };
 
   const handleSignOut = async () => {
-    await signOut();
-     router.push(LOGIN_ROUTE);
+    signOut().then(() => router.push(LOGIN_ROUTE))
   };
   
   return (
