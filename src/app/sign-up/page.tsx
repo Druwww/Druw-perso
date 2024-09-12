@@ -3,12 +3,12 @@ import { useState } from 'react';
 import { Container, TextField, Button, Typography, Box } from '@mui/material';
 import {useCreateUserWithEmailAndPassword} from 'react-firebase-hooks/auth'
 import {auth} from '@/lib/firebase/config'
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
+import { LOGIN_ROUTE } from '@/constants';
 
 export default function SignUp() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const router = useRouter()
 
   const [createUserWithEmailAndPassword] = useCreateUserWithEmailAndPassword(auth);
 
@@ -18,7 +18,7 @@ export default function SignUp() {
       console.log({res})
       setEmail('')
       setPassword('')
-      router.push('/sign-in')
+      redirect(LOGIN_ROUTE);
     }
     catch (e){
       console.error(e)

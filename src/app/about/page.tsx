@@ -1,6 +1,4 @@
-import NavBar from "../../component/navbar/navbar";
-
-export default function Home() {
+export default function About() {
   return (
     <div>
       Druw Perso website - About Page !

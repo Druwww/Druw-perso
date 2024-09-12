@@ -3,25 +3,24 @@ import { useState } from 'react';
 import { Container, TextField, Button, Typography, Box } from '@mui/material';
 import {useSignInWithEmailAndPassword} from 'react-firebase-hooks/auth'
 import {auth} from '@/lib/firebase/config'
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { signInWithEmail } from '@/lib/firebase/auth';
 import { createSession } from '@/actions/auth-actions';
+import { ROOT_ROUTE } from '@/constants';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  
-
   const router = useRouter()
 
   const handleSubmit = async () => {
     const uid = await signInWithEmail(email, password);
-    if(!uid){
-      setPassword('');
-      return;
+    if(uid){
+      router.push(ROOT_ROUTE);
     }
-    createSession(uid);
+    
+    setPassword('');
   };
 
   return (

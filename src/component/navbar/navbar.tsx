@@ -17,17 +17,17 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '@/lib/firebase/config';
 import { AccountCircle } from '@mui/icons-material';
 import { signOut } from '@/lib/firebase/auth';
-import { useRouter } from 'next/navigation';
-import { checkSession, removeSession } from '@/actions/auth-actions';
-import { cookies } from 'next/headers';
-import { SESSION_COOKIE_NAME } from '@/constants';
-import { useEffect } from 'react';
+import { LOGIN_ROUTE } from '@/constants';
+import Link from 'next/link';
+import { redirect, useRouter } from 'next/navigation';
 
 const pages = ['WIP', 'About'];
 
 function NavBar() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+
+  const router = useRouter();
 
   const [user] = useAuthState(auth);
 
@@ -48,12 +48,8 @@ function NavBar() {
 
   const handleSignOut = async () => {
     await signOut();
-    await removeSession();
+     router.push(LOGIN_ROUTE);
   };
-
-  useEffect(() => {
-    checkSession()
-  }, [user])
   
   return (
     <AppBar position="static">
@@ -165,11 +161,18 @@ function NavBar() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              <MenuItem key="userEmail" onClick={handleCloseUserMenu}>
-                <Typography sx={{ textAlign: 'center' }}>{user?.email}</Typography>
-              </MenuItem>
-              <MenuItem key="logout" onClick={handleCloseUserMenu}>
+              {user?.email && 
+                <MenuItem key="userEmail">
+                  <Typography sx={{ textAlign: 'center' }}>{user?.email}</Typography> 
+                </MenuItem>
+              }
+              <MenuItem key="login-logout">
+                {user?.email ? 
                 <Typography sx={{ textAlign: 'center' }} onClick={handleSignOut}>Logout</Typography>
+              :
+              
+                <Link href={LOGIN_ROUTE}>Login</Link>
+              }
               </MenuItem>
             </Menu>
           </Box>
