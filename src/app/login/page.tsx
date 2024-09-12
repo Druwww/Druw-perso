@@ -5,7 +5,7 @@ import {useSignInWithEmailAndPassword} from 'react-firebase-hooks/auth'
 import {auth} from '@/lib/firebase/config'
 import { redirect, useRouter } from "next/navigation";
 import { signInWithEmail } from '@/lib/firebase/auth';
-import { createSession } from '@/actions/auth-actions';
+// import { createSession } from '@/actions/auth-actions';
 import { ROOT_ROUTE } from '@/constants';
 import { LoadingButton } from '@mui/lab';
 
