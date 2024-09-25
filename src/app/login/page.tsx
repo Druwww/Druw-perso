@@ -1,13 +1,9 @@
 'use client'
 import { useState } from 'react';
 import { Container, TextField, Button, Typography, Box } from '@mui/material';
-import {useSignInWithEmailAndPassword} from 'react-firebase-hooks/auth'
-import {auth} from '@/lib/firebase/config'
 import { redirect, useRouter } from "next/navigation";
-import { signInWithEmail } from '@/lib/firebase/auth';
-// import { createSession } from '@/actions/auth-actions';
-import { ROOT_ROUTE } from '@/constants';
 import { LoadingButton } from '@mui/lab';
+import { useAuth } from '@/lib/auth/auth-provider';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -17,15 +13,20 @@ export default function Login() {
 
   const router = useRouter()
 
+  const auth = useAuth();
+
   const handleSubmit = async () => {
     setLoading(true)
-    signInWithEmail(email, password).then((uid : string | undefined) => {
-      if(uid){
-        router.push(ROOT_ROUTE);
-      }
-      setLoading(false);
-    })
-    setPassword('');
+    auth?.loginEmail(email, password)
+      .then(() =>{
+        console.log("Login success !!!!")
+      })
+      .catch(() => {
+        console.error("Something went wrong");
+        setPassword('');
+        setLoading(false);
+    });
+    
   };
 
   return (

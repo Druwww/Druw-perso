@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import StoreProvider from "./StoreProvider";
 import NavBar from "../component/navbar/navbar";
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import { AuthProvider } from "@/lib/auth/auth-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,14 +19,16 @@ export default function RootLayout({
 }>) {
 
   return (
-    <StoreProvider>
-      <html lang="en">
-        <body className={inter.className}>  
+    <html lang="en">
+      <body className={inter.className}>
+        <AuthProvider>
           <NavBar/>
-          {children}
-          <SpeedInsights />
-        </body>
-      </html>
-    </StoreProvider>
+          <main className="flex flex-col items-center h-screen w-screen bg-slate-800 pt-40">
+            {children}
+          </main>
+        </AuthProvider>
+        <SpeedInsights />
+      </body>
+    </html>
   );
 }

@@ -13,15 +13,13 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import ComputerIcon from '@mui/icons-material/Computer';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth } from '@/lib/firebase/config';
 import { AccountCircle } from '@mui/icons-material';
-import { signOut } from '@/lib/firebase/auth';
 import { LOGIN_ROUTE } from '@/constants';
 import Link from 'next/link';
-import { redirect, useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useAuth } from '@/lib/auth/auth-provider';
 
-const pages = ['WIP', 'About'];
+const pages = ['user', 'friend', 'admin'];
 
 function NavBar() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
@@ -29,7 +27,13 @@ function NavBar() {
 
   const router = useRouter();
 
-  const [user] = useAuthState(auth);
+  const pathname = usePathname();
+
+  const isAdminPage = pathname?.includes("/admin");
+  const isProPage = pathname?.includes("/friend");
+  const isUserPage = pathname?.includes("/user");
+
+  const auth = useAuth();
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -46,8 +50,8 @@ function NavBar() {
     setAnchorElUser(null);
   };
 
-  const handleSignOut = async () => {
-    signOut().then(() => router.push(LOGIN_ROUTE))
+  const handleLogout = async () => {
+    auth?.logout().then(() => router.push(LOGIN_ROUTE))
   };
   
   return (
@@ -127,21 +131,53 @@ function NavBar() {
             LOGO
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page) => (
-              <Button
-                key={page}
-                onClick={handleCloseNavMenu}
-                href={'/' + page.toLowerCase()}
-                sx={{ my: 2, color: 'white', display: 'block' }}
-              >
-                {page}
-              </Button>
-            ))}
+            {auth?.currentUser ?
+              pages.map((page) => (
+                <Link
+                  href={'/' + page.toLowerCase()}
+                  key={page}
+                >
+                  <Button
+                    onClick={handleCloseNavMenu}
+                    sx={{ my: 2, color: 'white', display: 'block' }}
+                  >
+                    {page}
+                  </Button>
+                </Link>
+              ))
+              : (<
+                Link
+                  href={'/login'}
+                  key="login"
+                >
+                  <Button
+                    onClick={handleCloseNavMenu}
+                    sx={{ my: 2, color: 'white', display: 'block' }}
+                  >
+                    Login
+                  </Button>
+                </Link>
+              )
+            }
           </Box>
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-              <AccountCircle />
+                {auth?.currentUser && (
+                  <span
+                  className={`${
+                    auth.isAdmin
+                      ? "bg-orange-400"
+                      : auth.isFriend
+                      ? "bg-emerald-400"
+                      : "bg-pink-600"
+                    } text-white text-xs px-2 py-1 rounded-full`}
+                  >
+                    {auth.isAdmin ? "Admin" : auth.isFriend ? "Friend" : "User"}
+                  </span>
+                )}
+                
+                <AccountCircle />
               </IconButton>
             </Tooltip>
             <Menu
@@ -160,14 +196,14 @@ function NavBar() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {user?.email && 
+              {auth?.currentUser?.email &&
                 <MenuItem key="userEmail">
-                  <Typography sx={{ textAlign: 'center' }}>{user?.email}</Typography> 
+                  <Typography sx={{ textAlign: 'center' }}>{auth?.currentUser?.email}</Typography>
                 </MenuItem>
               }
               <MenuItem key="login-logout">
-                {user?.email ? 
-                <Typography sx={{ textAlign: 'center' }} onClick={handleSignOut}>Logout</Typography>
+                {auth?.currentUser?.email ?
+                <Typography sx={{ textAlign: 'center' }} onClick={handleLogout}>Logout</Typography>
               :
               
                 <Link href={LOGIN_ROUTE}>Login</Link>
